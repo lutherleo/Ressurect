@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Jev Resume Builder</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --ink: #1b1f24; --muted: #667085;
+    --line: #e3e6ea; --accent: #3056d3; --accent-weak: #e8edfb;
+    --good: #1a7f4b; --good-weak: #e4f5ec; --drop: #98a2b3; --drop-weak: #f0f1f3;
+    --pin: #8a5a00; --pin-weak: #fbf0db; --ban: #b42318; --ban-weak: #fbe9e7;
+    --warn: #8a5a00; --radius: 10px; --shadow: 0 1px 3px rgba(16,24,40,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:#14171c; --panel:#1b1f26; --ink:#e7eaee; --muted:#98a2b3; --line:#2a2f38;
+      --accent:#7b97f0; --accent-weak:#222a3f; --good:#4cc187; --good-weak:#163026;
+      --drop:#6b7280; --drop-weak:#22262e; --pin:#e0a84a; --pin-weak:#33280f;
+      --ban:#f0776b; --ban-weak:#331a18; --warn:#e0a84a; --shadow:none;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+    font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+  header { display:flex; align-items:center; gap:12px; padding:14px 20px;
+    border-bottom:1px solid var(--line); background:var(--panel); position:sticky; top:0; z-index:5; }
+  header h1 { font-size:16px; margin:0; font-weight:650; letter-spacing:-.01em; }
+  header .sub { color:var(--muted); font-size:13px; }
+  .badge { margin-left:auto; font-size:12px; padding:4px 10px; border-radius:999px;
+    border:1px solid var(--line); color:var(--muted); }
+  .badge.ok { color:var(--good); background:var(--good-weak); border-color:transparent; }
+  .badge.no { color:var(--ban); background:var(--ban-weak); border-color:transparent; }
+  .tabs { display:flex; gap:4px; padding:10px 20px 0; background:var(--panel); border-bottom:1px solid var(--line); }
+  .tabs button { background:none; color:var(--muted); border:none; border-bottom:2px solid transparent;
+    padding:8px 14px; font:inherit; font-weight:600; cursor:pointer; width:auto; margin:0; border-radius:0; }
+  .tabs button.active { color:var(--accent); border-bottom-color:var(--accent); }
+  main { max-width:1200px; margin:0 auto; padding:18px; }
+  .view[hidden] { display:none; }
+  .cols { display:grid; grid-template-columns: 360px 1fr; gap:18px; }
+  @media (max-width: 820px){ .cols{ grid-template-columns:1fr; } }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:16px; }
+  .card h2 { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted);
+    margin:0 0 12px; font-weight:650; }
+  label { display:block; font-size:13px; color:var(--muted); margin:10px 0 4px; }
+  input[type=text], textarea, select { width:100%; padding:8px 10px; border:1px solid var(--line);
+    border-radius:8px; background:var(--bg); color:var(--ink); font:inherit; }
+  input[type=text]:focus, textarea:focus { outline:2px solid var(--accent-weak); border-color:var(--accent); }
+  textarea { min-height:90px; resize:vertical; font-size:13px; }
+  .row { display:flex; align-items:center; gap:8px; margin-top:10px; }
+  .row label { margin:0; }
+  button { background:var(--accent); color:#fff; border:none; padding:10px 14px; border-radius:8px;
+    font:inherit; font-weight:600; cursor:pointer; width:100%; margin-top:14px; }
+  button:disabled { opacity:.6; cursor:default; }
+  .btn2 { background:var(--accent-weak); color:var(--accent); width:auto; padding:7px 12px; margin:0; font-size:13px; }
+  .btn-x { background:none; color:var(--ban); width:auto; margin:0; padding:2px 8px; font-size:18px; line-height:1; border-radius:6px; }
+  .btn-x:hover { background:var(--ban-weak); }
+  .apps { margin-top:6px; display:flex; flex-direction:column; gap:4px; }
+  .apps a { display:flex; justify-content:space-between; padding:7px 10px; border-radius:7px;
+    text-decoration:none; color:var(--ink); font-size:13px; border:1px solid transparent; cursor:pointer; }
+  .apps a:hover { background:var(--accent-weak); }
+  .apps .tag { color:var(--muted); font-size:11px; }
+  .meta { display:flex; flex-wrap:wrap; gap:18px; align-items:flex-start; }
+  .kv .k { font-size:12px; color:var(--muted); }
+  .kv .v { font-size:17px; font-weight:650; }
+  .kv .v .hybrid { font-size:12px; color:var(--pin); font-weight:600; }
+  .probs { min-width:220px; }
+  .prob { display:grid; grid-template-columns:90px 1fr 42px; align-items:center; gap:8px; margin:3px 0; font-size:12px; }
+  .bar { height:7px; background:var(--accent-weak); border-radius:999px; overflow:hidden; }
+  .bar > i { display:block; height:100%; background:var(--accent); }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { text-align:left; padding:7px 8px; border-bottom:1px solid var(--line); }
+  th { color:var(--muted); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.05em; }
+  td.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .pill { font-size:11px; padding:2px 8px; border-radius:999px; font-weight:600; }
+  .pill.chosen { color:var(--good); background:var(--good-weak); }
+  .pill.dropped { color:var(--drop); background:var(--drop-weak); }
+  .pill.pinned { color:var(--pin); background:var(--pin-weak); }
+  .pill.banned { color:var(--ban); background:var(--ban-weak); }
+  .warnings { margin-top:12px; }
+  .warnings div { font-size:12px; color:var(--warn); padding:4px 0; }
+  .empty { color:var(--muted); font-size:14px; padding:24px 0; text-align:center; }
+  .resume { background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:var(--radius);
+    padding:30px 34px; box-shadow:var(--shadow); font-family:"Times New Roman",Georgia,serif; }
+  .resume .name { text-align:center; font-size:24px; font-weight:700; }
+  .resume .contact { text-align:center; color:var(--muted); font-size:13px; margin:4px 0 14px; }
+  .resume h3 { font-size:14px; text-transform:uppercase; letter-spacing:.04em; border-bottom:1.5px solid var(--ink);
+    padding-bottom:2px; margin:16px 0 6px; }
+  .resume .item { margin:7px 0; }
+  .resume .item .head { display:flex; justify-content:space-between; font-size:14px; }
+  .resume .item .dates { color:var(--muted); font-style:italic; font-size:12px; }
+  .resume ul { margin:3px 0 0; padding-left:20px; }
+  .resume li { font-size:13px; margin:1px 0; }
+  .resume .skills div { font-size:13px; margin:2px 0; }
+  .spinner { display:inline-block; width:14px; height:14px; border:2px solid var(--accent-weak);
+    border-top-color:var(--accent); border-radius:50%; animation:spin .7s linear infinite; vertical-align:-2px; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .err { color:var(--ban); background:var(--ban-weak); padding:10px 12px; border-radius:8px; font-size:13px; white-space:pre-wrap; }
+  .ok-msg { color:var(--good); background:var(--good-weak); padding:10px 12px; border-radius:8px; font-size:13px; }
+  /* corpus editor */
+  .ed-section { margin-bottom:18px; }
+  .ed-section > .hd { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .ed-section > .hd h2 { margin:0; }
+  .ed-card { border:1px solid var(--line); border-radius:9px; padding:12px; margin-bottom:10px; background:var(--bg); }
+  .ed-card .top { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .ed-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px 12px; }
+  @media (max-width:640px){ .ed-grid{ grid-template-columns:1fr; } }
+  .ed-grid .full { grid-column:1 / -1; }
+  .ed-bullets { margin-top:8px; }
+  .ed-bullet { display:flex; gap:6px; align-items:flex-start; margin:5px 0; }
+  .ed-bullet textarea { min-height:38px; }
+  .hint { font-size:12px; color:var(--muted); margin:2px 0 0; }
+  .savebar { position:sticky; bottom:0; background:var(--panel); border-top:1px solid var(--line);
+    padding:12px 0; margin-top:8px; display:flex; gap:12px; align-items:center; }
+  .savebar button { width:auto; margin:0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Jev Resume Builder</h1>
+  <span class="sub" id="corpusPath"></span>
+  <span class="badge" id="keyBadge">…</span>
+</header>
+
+<div class="tabs">
+  <button id="tabRun" class="active" onclick="showTab('run')">Run selection</button>
+  <button id="tabCorpus" onclick="showTab('corpus')">Edit corpus</button>
+</div>
+
+<main>
+  <!-- RUN VIEW -->
+  <div class="view cols" id="view-run">
+    <section>
+      <div class="card">
+        <h2>Run a selection</h2>
+        <label for="slug">Application slug</label>
+        <input type="text" id="slug" value="preview" />
+        <label for="jd">Job description</label>
+        <textarea id="jd" style="min-height:150px;" placeholder="Paste the job description here…"></textarea>
+        <div class="row">
+          <input type="checkbox" id="mock" />
+          <label for="mock">Use mock response (no API call)</label>
+        </div>
+        <button id="run">Run selection</button>
+        <div id="formErr"></div>
+      </div>
+      <div class="card" style="margin-top:16px;">
+        <h2>Saved applications</h2>
+        <div class="apps" id="apps"><div class="empty">none yet</div></div>
+      </div>
+    </section>
+    <section>
+      <div class="card" id="results">
+        <div class="empty">Run a selection or pick a saved application to see results.</div>
+      </div>
+      <div style="margin-top:16px;" id="previewWrap"></div>
+    </section>
+  </div>
+
+  <!-- CORPUS VIEW -->
+  <div class="view" id="view-corpus" hidden>
+    <div class="card">
+      <h2>Corpus — all field data</h2>
+      <p class="hint">Edits save to <code id="corpusPath2"></code>. Everything is validated before writing.
+        Leave an experience/project <b>id</b> blank to auto-generate one; bullet ids are assigned automatically.</p>
+      <div id="editor"></div>
+      <div class="savebar">
+        <button id="saveCorpus">Save corpus</button>
+        <button class="btn2" id="reloadCorpus">Reload from disk</button>
+        <span id="saveMsg"></span>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const CFG = {};
+
+function showTab(which) {
+  $("#view-run").hidden = which !== "run";
+  $("#view-corpus").hidden = which !== "corpus";
+  $("#tabRun").classList.toggle("active", which === "run");
+  $("#tabCorpus").classList.toggle("active", which === "corpus");
+  if (which === "corpus" && !$("#editor").dataset.loaded) loadCorpus();
+}
+
+/* ---------------- config / run tab (unchanged behavior) ---------------- */
+async function loadConfig() {
+  const c = await (await fetch("/api/config")).json();
+  Object.assign(CFG, c);
+  $("#corpusPath").textContent = "corpus: " + c.corpus_path;
+  $("#corpusPath2").textContent = c.corpus_path;
+  const b = $("#keyBadge");
+  if (c.has_key) { b.textContent = "API key detected"; b.className = "badge ok"; }
+  else { b.textContent = "no API key — use mock"; b.className = "badge no"; $("#mock").checked = true; }
+}
+async function loadApps() {
+  const apps = await (await fetch("/api/applications")).json();
+  const el = $("#apps");
+  if (!apps.length) { el.innerHTML = '<div class="empty">none yet</div>'; return; }
+  el.innerHTML = "";
+  for (const a of apps) {
+    const row = document.createElement("a");
+    row.innerHTML = `<span>${esc(a.slug)}</span><span class="tag">${a.has_polished ? "polished" : "selected"}</span>`;
+    row.onclick = () => openApp(a.slug);
+    el.appendChild(row);
+  }
+}
+async function openApp(slug) {
+  const r = await fetch("/api/application/" + encodeURIComponent(slug));
+  if (!r.ok) return;
+  const data = await r.json();
+  $("#slug").value = slug;
+  renderResult(data.selected, data.catalog, [], null);
+}
+async function run() {
+  const btn = $("#run"); btn.disabled = true;
+  const prev = btn.textContent; btn.innerHTML = '<span class="spinner"></span> running…';
+  $("#formErr").innerHTML = "";
+  try {
+    const r = await fetch("/api/select", {
+      method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ jd: $("#jd").value, slug: $("#slug").value || "preview", mock: $("#mock").checked, refresh: true })
+    });
+    const data = await r.json();
+    if (!r.ok) { $("#formErr").innerHTML = `<div class="err">${esc(data.detail || "error")}</div>`; return; }
+    renderResult(data.selected, data.catalog, data.warnings, data.from_cache);
+    loadApps();
+  } catch (e) { $("#formErr").innerHTML = `<div class="err">${esc(e.message)}</div>`; }
+  finally { btn.disabled = false; btn.textContent = prev; }
+}
+function renderResult(selected, catalog, warnings, fromCache) {
+  const m = selected._meta;
+  const chosen = new Set([...selected.experiences.map(e=>e.id), ...selected.projects.map(p=>p.id)]);
+  const ov = m.overrides_applied || {};
+  const pinned = new Set(ov.pin || []), banned = new Set(ov.ban || []);
+  const probs = Object.entries(m.track_probabilities || {}).sort((a,b)=>b[1]-a[1]);
+  const probBars = probs.map(([k,v]) =>
+    `<div class="prob"><span>${esc(k)}</span><div class="bar"><i style="width:${(v*100).toFixed(0)}%"></i></div><span>${v.toFixed(2)}</span></div>`).join("");
+  const rows = Object.keys(catalog).map(id => {
+    const score = (m.scores && m.scores[id] != null) ? m.scores[id].toFixed(2) : "—";
+    let status = chosen.has(id) ? "chosen" : "dropped";
+    let extra = "";
+    if (pinned.has(id)) extra += ' <span class="pill pinned">pinned</span>';
+    if (banned.has(id)) extra += ' <span class="pill banned">banned</span>';
+    return `<tr><td>${esc(catalog[id].label)}</td><td>${esc(catalog[id].kind)}</td>
+      <td class="num">${score}</td><td><span class="pill ${status}">${status}</span>${extra}</td></tr>`;
+  }).join("");
+  const cacheNote = fromCache === null ? "" : `<span class="badge ${fromCache ? '' : 'ok'}">${fromCache ? 'cache hit' : 'fetched'}</span>`;
+  const warnHtml = (warnings && warnings.length) ? `<div class="warnings">${warnings.map(w=>`<div>⚠ ${esc(w)}</div>`).join("")}</div>` : "";
+  $("#results").innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;"><h2 style="margin:0;">Result</h2>${cacheNote}</div>
+    <div class="meta" style="margin-top:12px;">
+      <div class="kv"><div class="k">Track</div><div class="v">${esc(m.track)}${m.track_hybrid ? ' <span class="hybrid">hybrid</span>' : ''}</div></div>
+      <div class="kv"><div class="k">Location</div><div class="v">${esc(m.location_label)}</div><div class="k">confidence ${(m.location_confidence ?? 0).toFixed(2)}</div></div>
+      <div class="probs"><div class="k" style="margin-bottom:4px;">Track probabilities</div>${probBars}</div>
+    </div>
+    <table style="margin-top:14px;"><thead><tr><th>Item</th><th>Kind</th><th>Exp. score</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>
+    ${warnHtml}`;
+  $("#previewWrap").innerHTML = resumeHtml(selected);
+}
+function resumeHtml(s) {
+  const p = s.profile || {};
+  const contact = [p.location, p.email, p.github, p.linkedin].filter(Boolean).map(esc).join(" &nbsp;·&nbsp; ");
+  const exp = (s.experiences||[]).map(e => `
+    <div class="item"><div class="head"><span><b>${esc(e.role)}</b>, ${esc(e.org)}</span><span>${esc(e.location)}</span></div>
+      <div class="dates">${esc(e.start)} – ${esc(e.end)}</div>
+      <ul>${(e.bullets||[]).map(b=>`<li>${esc(b.text)}</li>`).join("")}</ul></div>`).join("");
+  const proj = (s.projects||[]).map(pr => `
+    <div class="item"><div class="head"><span><b>${esc(pr.name)}</b> ${pr.tech&&pr.tech.length?`<i>(${esc(pr.tech.join(", "))})</i>`:""}</span><span>${esc(pr.link||"")}</span></div>
+      <ul>${(pr.bullets||[]).map(b=>`<li>${esc(b.text)}</li>`).join("")}</ul></div>`).join("");
+  const skills = Object.entries(s.skills||{}).map(([c,items])=>`<div><b>${esc(c)}:</b> ${esc((items||[]).join(", "))}</div>`).join("");
+  const edu = (s.education||[]).map(ed=>`
+    <div class="item"><div class="head"><span><b>${esc(ed.school)}</b></span><span>${esc(ed.dates)}</span></div><div>${esc(ed.degree)}</div>
+      ${(ed.details&&ed.details.length)?`<ul>${ed.details.map(d=>`<li>${esc(d)}</li>`).join("")}</ul>`:""}</div>`).join("");
+  const certs = (s.certifications&&s.certifications.length)?`<h3>Certifications</h3><div>${esc(s.certifications.join("; "))}</div>`:"";
+  return `<div class="resume"><div class="name">${esc(p.name||"")}</div><div class="contact">${contact}</div>
+    ${exp?`<h3>Experience</h3>${exp}`:""}${proj?`<h3>Projects</h3>${proj}`:""}
+    ${skills?`<h3>Skills</h3><div class="skills">${skills}</div>`:""}${edu?`<h3>Education</h3>${edu}`:""}${certs}</div>`;
+}
+
+/* ---------------- corpus editor ---------------- */
+function inp(f, v, ph) { return `<input type="text" data-f="${f}" value="${esc(v)}" placeholder="${esc(ph||"")}" />`; }
+function area(f, v, ph) { return `<textarea data-f="${f}" placeholder="${esc(ph||"")}">${esc(v)}</textarea>`; }
+
+function bulletRow(text) {
+  return `<div class="ed-bullet"><textarea data-f="bullet" placeholder="Bullet text…">${esc(text||"")}</textarea>
+    <button class="btn-x" onclick="this.closest('.ed-bullet').remove()" title="remove bullet">×</button></div>`;
+}
+function expCard(e) {
+  e = e || {};
+  return `<div class="ed-card ed-exp">
+    <div class="top"><b>Experience</b><button class="btn-x" onclick="this.closest('.ed-exp').remove()" title="remove">×</button></div>
+    <div class="ed-grid" style="margin-top:8px;">
+      <div><label>Role</label>${inp("role", e.role, "Software Engineer")}</div>
+      <div><label>Organization</label>${inp("org", e.org, "Acme Corp")}</div>
+      <div><label>Location</label>${inp("location", e.location, "San Francisco, CA")}</div>
+      <div><label>id (optional)</label>${inp("id", e.id, "auto from role")}</div>
+      <div><label>Start (YYYY-MM)</label>${inp("start", e.start, "2024-06")}</div>
+      <div><label>End (YYYY-MM or present)</label>${inp("end", e.end, "present")}</div>
+      <div class="full"><label>One-line summary</label>${inp("summary", e.summary, "Plain description used in Jev state")}</div>
+    </div>
+    <div class="ed-bullets"><label>Bullets</label><div class="bullets-list">${(e.bullets||[]).map(b=>bulletRow(b.text)).join("")}</div>
+      <button class="btn2" style="margin-top:6px;" onclick="this.previousElementSibling.insertAdjacentHTML('beforeend', bulletRow(''))">+ bullet</button></div>
+  </div>`;
+}
+function projCard(p) {
+  p = p || {};
+  return `<div class="ed-card ed-proj">
+    <div class="top"><b>Project</b><button class="btn-x" onclick="this.closest('.ed-proj').remove()" title="remove">×</button></div>
+    <div class="ed-grid" style="margin-top:8px;">
+      <div><label>Name</label>${inp("name", p.name, "NetMon")}</div>
+      <div><label>id (optional)</label>${inp("id", p.id, "auto from name")}</div>
+      <div><label>Tech (comma-separated)</label>${inp("tech", (p.tech||[]).join(", "), "Go, eBPF")}</div>
+      <div><label>Link</label>${inp("link", p.link, "github.com/you/x")}</div>
+      <div class="full"><label>One-line summary</label>${inp("summary", p.summary, "Plain description")}</div>
+    </div>
+    <div class="ed-bullets"><label>Bullets</label><div class="bullets-list">${(p.bullets||[]).map(b=>bulletRow(b.text)).join("")}</div>
+      <button class="btn2" style="margin-top:6px;" onclick="this.previousElementSibling.insertAdjacentHTML('beforeend', bulletRow(''))">+ bullet</button></div>
+  </div>`;
+}
+function catRow(name, skills) {
+  return `<div class="ed-bullet ed-cat"><input type="text" data-f="catname" value="${esc(name||"")}" placeholder="Category (e.g. Languages)" style="flex:1;" />
+    <input type="text" data-f="catskills" value="${esc((skills||[]).join(", "))}" placeholder="comma-separated skills" style="flex:2;" />
+    <button class="btn-x" onclick="this.closest('.ed-cat').remove()">×</button></div>`;
+}
+function trackCard(name, cats) {
+  cats = cats || {};
+  const rows = Object.entries(cats).map(([c,s])=>catRow(c,s)).join("");
+  return `<div class="ed-card ed-track">
+    <div class="top"><div><label style="margin:0;">Track name</label>${inp("trackname", name, "developer")}</div>
+      <button class="btn-x" onclick="this.closest('.ed-track').remove()" title="remove track">×</button></div>
+    <div class="cat-list" style="margin-top:8px;">${rows}</div>
+    <button class="btn2" style="margin-top:6px;" onclick="this.previousElementSibling.insertAdjacentHTML('beforeend', catRow('',[]))">+ category</button>
+  </div>`;
+}
+function eduCard(ed) {
+  ed = ed || {};
+  return `<div class="ed-card ed-edu">
+    <div class="top"><b>Education</b><button class="btn-x" onclick="this.closest('.ed-edu').remove()" title="remove">×</button></div>
+    <div class="ed-grid" style="margin-top:8px;">
+      <div><label>School</label>${inp("school", ed.school, "State University")}</div>
+      <div><label>Degree</label>${inp("degree", ed.degree, "B.S. Computer Science")}</div>
+      <div><label>Dates</label>${inp("dates", ed.dates, "2022 - 2026")}</div>
+      <div class="full"><label>Details (one per line)</label>${area("details", (ed.details||[]).join("\n"), "GPA 3.8/4.0")}</div>
+    </div></div>`;
+}
+function locRow(label, value) {
+  return `<div class="ed-bullet ed-loc"><input type="text" data-f="loclabel" value="${esc(label||"")}" placeholder="label (e.g. sf)" style="flex:1;" />
+    <input type="text" data-f="locvalue" value="${esc(value||"")}" placeholder="New York, NY" style="flex:2;" />
+    <button class="btn-x" onclick="this.closest('.ed-loc').remove()">×</button></div>`;
+}
+
+function buildEditor(c) {
+  const p = c.profile || {};
+  const locs = Object.entries(p.locations || {}).map(([k,v])=>locRow(k,v)).join("");
+  const exps = (c.experiences||[]).map(expCard).join("");
+  const projs = (c.projects||[]).map(projCard).join("");
+  const tracks = Object.entries(c.skill_lists||{}).map(([n,cats])=>trackCard(n,cats)).join("");
+  const edus = (c.education||[]).map(eduCard).join("");
+  $("#editor").innerHTML = `
+    <div class="ed-section" id="ed-profile">
+      <div class="hd"><h2>Profile</h2></div>
+      <div class="ed-card"><div class="ed-grid">
+        <div><label>Name</label>${inp("name", p.name)}</div>
+        <div><label>Email</label>${inp("email", p.email)}</div>
+        <div><label>GitHub</label>${inp("github", p.github)}</div>
+        <div><label>LinkedIn</label>${inp("linkedin", p.linkedin)}</div>
+      </div>
+      <label style="margin-top:10px;">Locations (label → display)</label>
+      <div class="loc-list">${locs}</div>
+      <button class="btn2" style="margin-top:6px;" onclick="this.previousElementSibling.insertAdjacentHTML('beforeend', locRow('',''))">+ location</button>
+      </div>
+    </div>
+    <div class="ed-section"><div class="hd"><h2>Experiences</h2>
+      <button class="btn2" onclick="$('#exp-list').insertAdjacentHTML('beforeend', expCard({}))">+ experience</button></div>
+      <div id="exp-list">${exps}</div></div>
+    <div class="ed-section"><div class="hd"><h2>Projects</h2>
+      <button class="btn2" onclick="$('#proj-list').insertAdjacentHTML('beforeend', projCard({}))">+ project</button></div>
+      <div id="proj-list">${projs}</div></div>
+    <div class="ed-section"><div class="hd"><h2>Skill lists (per track)</h2>
+      <button class="btn2" onclick="$('#track-list').insertAdjacentHTML('beforeend', trackCard('',{}))">+ track</button></div>
+      <div id="track-list">${tracks}</div></div>
+    <div class="ed-section"><div class="hd"><h2>Education</h2>
+      <button class="btn2" onclick="$('#edu-list').insertAdjacentHTML('beforeend', eduCard({}))">+ education</button></div>
+      <div id="edu-list">${edus}</div></div>
+    <div class="ed-section"><div class="hd"><h2>Certifications</h2></div>
+      <div class="ed-card">${area("certs", (c.certifications||[]).join("\n"), "One per line, e.g. CompTIA Security+ (2024)")}</div></div>`;
+  $("#editor").dataset.loaded = "1";
+}
+
+async function loadCorpus() {
+  const r = await fetch("/api/corpus");
+  const data = await r.json();
+  if (!r.ok) { $("#editor").innerHTML = `<div class="err">${esc(data.detail||"error")}</div>`; return; }
+  buildEditor(data.corpus);
+}
+
+const val = (card, f) => { const el = card.querySelector(`[data-f="${f}"]`); return el ? el.value.trim() : ""; };
+function slug(prefix, s, i) {
+  let base = (s||"").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+  if (!base) base = "item" + i;
+  if (!base.startsWith(prefix)) base = prefix + base;
+  return base;
+}
+function collectBullets(card, pid) {
+  const out = [];
+  card.querySelectorAll('.ed-bullet [data-f="bullet"]').forEach((t, i) => {
+    const text = t.value.trim();
+    if (text) out.push({ id: `${pid}.b${i+1}`, text });
+  });
+  return out;
+}
+function collectCorpus() {
+  // profile
+  const pcard = $("#ed-profile .ed-card");
+  const profile = { name: val(pcard,"name"), email: val(pcard,"email"),
+    github: val(pcard,"github"), linkedin: val(pcard,"linkedin"), locations: {} };
+  pcard.querySelectorAll(".ed-loc").forEach(r => {
+    const k = r.querySelector('[data-f="loclabel"]').value.trim();
+    const v = r.querySelector('[data-f="locvalue"]').value.trim();
+    if (k) profile.locations[k] = v;
+  });
+  // experiences
+  const experiences = [];
+  $("#exp-list").querySelectorAll(".ed-exp").forEach((card, i) => {
+    let id = val(card,"id") || slug("exp_", val(card,"role") || val(card,"org"), i);
+    const e = { id, org: val(card,"org"), role: val(card,"role"), location: val(card,"location"),
+      start: val(card,"start"), end: val(card,"end"), summary: val(card,"summary") };
+    e.bullets = collectBullets(card, id);
+    experiences.push(e);
+  });
+  // projects
+  const projects = [];
+  $("#proj-list").querySelectorAll(".ed-proj").forEach((card, i) => {
+    let id = val(card,"id") || slug("proj_", val(card,"name"), i);
+    const tech = val(card,"tech").split(",").map(s=>s.trim()).filter(Boolean);
+    const pr = { id, name: val(card,"name"), tech, link: val(card,"link") || null, summary: val(card,"summary") };
+    pr.bullets = collectBullets(card, id);
+    projects.push(pr);
+  });
+  // skills
+  const skill_lists = {};
+  $("#track-list").querySelectorAll(".ed-track").forEach(card => {
+    const tname = val(card,"trackname");
+    if (!tname) return;
+    const cats = {};
+    card.querySelectorAll(".ed-cat").forEach(row => {
+      const cname = row.querySelector('[data-f="catname"]').value.trim();
+      const skills = row.querySelector('[data-f="catskills"]').value.split(",").map(s=>s.trim()).filter(Boolean);
+      if (cname) cats[cname] = skills;
+    });
+    skill_lists[tname] = cats;
+  });
+  // education
+  const education = [];
+  $("#edu-list").querySelectorAll(".ed-edu").forEach(card => {
+    const details = val(card,"details").split("\n").map(s=>s.trim()).filter(Boolean);
+    education.push({ school: val(card,"school"), degree: val(card,"degree"), dates: val(card,"dates"), details });
+  });
+  // certifications
+  const certsEl = $("#editor").querySelector('[data-f="certs"]');
+  const certifications = (certsEl ? certsEl.value : "").split("\n").map(s=>s.trim()).filter(Boolean);
+  return { profile, experiences, projects, skill_lists, education, certifications };
+}
+
+async function saveCorpus() {
+  const btn = $("#saveCorpus"); btn.disabled = true;
+  const msg = $("#saveMsg"); msg.innerHTML = "";
+  try {
+    const body = collectCorpus();
+    const r = await fetch("/api/corpus", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(body) });
+    const data = await r.json();
+    if (!r.ok) { msg.innerHTML = `<span class="err">${esc(data.detail)}</span>`; return; }
+    msg.innerHTML = `<span class="ok-msg">Saved ${data.experiences} experiences, ${data.projects} projects → ${esc(data.path)}</span>`;
+    loadConfig();
+  } catch (e) { msg.innerHTML = `<span class="err">${esc(e.message)}</span>`; }
+  finally { btn.disabled = false; }
+}
+
+$("#run").onclick = run;
+$("#saveCorpus").onclick = saveCorpus;
+$("#reloadCorpus").onclick = () => { $("#editor").dataset.loaded = ""; loadCorpus().then(()=>$("#editor").dataset.loaded="1"); };
+loadConfig(); loadApps();
+</script>
+</body>
+</html>

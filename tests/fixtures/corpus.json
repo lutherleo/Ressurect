@@ -1,0 +1,140 @@
+{
+  "profile": {
+    "name": "Alex Rivera",
+    "email": "alex.rivera@example.com",
+    "github": "github.com/arivera",
+    "linkedin": "linkedin.com/in/arivera",
+    "locations": {
+      "ny": "New York, NY",
+      "sf": "San Francisco, CA"
+    }
+  },
+  "experiences": [
+    {
+      "id": "exp_startup",
+      "org": "Meshwave",
+      "role": "Software Engineer",
+      "location": "San Francisco, CA",
+      "start": "2024-06",
+      "end": "present",
+      "summary": "Backend engineer at a small IoT-networking startup building the device fleet API.",
+      "bullets": [
+        { "id": "exp_startup.b1", "text": "Built a FastAPI service that ingests telemetry from 12k edge devices at 4k msgs/sec." },
+        { "id": "exp_startup.b2", "text": "Cut p99 API latency from 480ms to 110ms by adding a Redis read-through cache." },
+        { "id": "exp_startup.b3", "text": "Designed the device-provisioning flow using mutual TLS and short-lived certificates." },
+        { "id": "exp_startup.b4", "text": "Wrote the on-call runbook and set up Prometheus alerting for the ingest pipeline." }
+      ]
+    },
+    {
+      "id": "exp_research_lab",
+      "org": "State University Networks Lab",
+      "role": "Undergraduate Research Lead",
+      "location": "New York, NY",
+      "start": "2023-09",
+      "end": "2024-05",
+      "summary": "Led a 3-student team studying congestion control over software-defined networks.",
+      "bullets": [
+        { "id": "exp_research_lab.b1", "text": "Led 3 students building an SDN testbed on Mininet to benchmark BBR vs CUBIC." },
+        { "id": "exp_research_lab.b2", "text": "Automated 200+ topology experiments and analyzed throughput/fairness in Python." },
+        { "id": "exp_research_lab.b3", "text": "Co-authored a workshop paper on queue-management under bursty traffic." }
+      ]
+    },
+    {
+      "id": "exp_internship_a",
+      "org": "FinServe Inc",
+      "role": "Security Engineering Intern",
+      "location": "New York, NY",
+      "start": "2023-06",
+      "end": "2023-08",
+      "summary": "Application-security intern on the product security team at a fintech.",
+      "bullets": [
+        { "id": "exp_internship_a.b1", "text": "Triaged 60+ findings from SAST/DAST scans and filed prioritized remediation tickets." },
+        { "id": "exp_internship_a.b2", "text": "Built a Burp extension that flagged missing auth checks on internal API routes." },
+        { "id": "exp_internship_a.b3", "text": "Ran a threat-modeling session for a new payments microservice." }
+      ]
+    },
+    {
+      "id": "exp_internship_b",
+      "org": "Bright Apps LLC",
+      "role": "Software Engineering Intern",
+      "location": "Remote",
+      "start": "2022-06",
+      "end": "2022-08",
+      "summary": "Full-stack intern building internal dashboards.",
+      "bullets": [
+        { "id": "exp_internship_b.b1", "text": "Shipped a React dashboard used by 40 internal staff to track support tickets." },
+        { "id": "exp_internship_b.b2", "text": "Added TypeScript types across the frontend, removing a class of runtime errors." }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj_netmon",
+      "name": "NetMon",
+      "tech": ["Go", "eBPF", "Grafana"],
+      "link": "github.com/arivera/netmon",
+      "summary": "A lightweight host network monitor using eBPF to trace per-process flows.",
+      "bullets": [
+        { "id": "proj_netmon.b1", "text": "Captured per-process TCP flows with an eBPF program and exported Prometheus metrics." },
+        { "id": "proj_netmon.b2", "text": "Built Grafana dashboards showing connection churn and top talkers in real time." }
+      ]
+    },
+    {
+      "id": "proj_portscan",
+      "name": "GoScan",
+      "tech": ["Go", "TCP"],
+      "link": "github.com/arivera/goscan",
+      "summary": "A concurrent TCP port scanner with service fingerprinting.",
+      "bullets": [
+        { "id": "proj_portscan.b1", "text": "Implemented a worker-pool scanner doing 65k ports in under 3 seconds on LAN." },
+        { "id": "proj_portscan.b2", "text": "Added banner-grabbing fingerprints for 20 common services." }
+      ]
+    },
+    {
+      "id": "proj_chatapp",
+      "name": "RealtimeChat",
+      "tech": ["TypeScript", "WebSocket", "React"],
+      "link": "github.com/arivera/realtimechat",
+      "summary": "A small realtime chat app with presence and typing indicators.",
+      "bullets": [
+        { "id": "proj_chatapp.b1", "text": "Built a WebSocket server with presence tracking and reconnection backoff." }
+      ]
+    },
+    {
+      "id": "proj_todo",
+      "name": "TodoFlow",
+      "tech": ["Python", "SQLite"],
+      "link": "github.com/arivera/todoflow",
+      "summary": "A CLI todo app with recurring tasks.",
+      "bullets": [
+        { "id": "proj_todo.b1", "text": "Implemented recurring-task scheduling with a SQLite-backed store." }
+      ]
+    }
+  ],
+  "skill_lists": {
+    "developer": {
+      "Languages": ["Python", "TypeScript", "Go", "SQL"],
+      "Frameworks": ["FastAPI", "React", "Node.js"],
+      "Infra": ["Docker", "Redis", "PostgreSQL", "Prometheus"]
+    },
+    "networking": {
+      "Protocols": ["TCP/IP", "BGP", "TLS", "HTTP/2"],
+      "Tools": ["Wireshark", "Mininet", "iperf", "eBPF"],
+      "Languages": ["Python", "Go"]
+    },
+    "cybersecurity": {
+      "Areas": ["AppSec", "Threat modeling", "SAST/DAST"],
+      "Tools": ["Burp Suite", "nmap", "Metasploit"],
+      "Languages": ["Python", "Go"]
+    }
+  },
+  "education": [
+    {
+      "school": "State University",
+      "degree": "B.S. Computer Science",
+      "dates": "2022 - 2026",
+      "details": ["Concentration in Networks & Security", "GPA 3.8/4.0"]
+    }
+  ],
+  "certifications": ["CompTIA Security+ (2024)"]
+}

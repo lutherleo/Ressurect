@@ -1,0 +1,82 @@
+%# ATS-safe single-column resume. No tables, no multi-column, no icons: plain
+%# text with standard section headings so applicant-tracking parsers read it.
+\documentclass[11pt,letterpaper]{article}
+\usepackage[margin=0.6in]{geometry}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage[T1]{fontenc}
+\usepackage[hidelinks]{hyperref}
+\pagestyle{empty}
+\setcounter{secnumdepth}{0}
+\setlist[itemize]{leftmargin=1.2em,itemsep=1pt,topsep=1pt,parsep=0pt}
+\titleformat{\section}{\large\bfseries}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{8pt}{3pt}
+
+\begin{document}
+
+\begin{center}
+  {\LARGE \textbf{\VAR{ profile.name | tex }}}\\[3pt]
+  \VAR{ profile.location | tex }
+  \BLOCK{ if profile.email } $\cdot$ \VAR{ profile.email | tex }\BLOCK{ endif }
+  \BLOCK{ if profile.github } $\cdot$ \VAR{ profile.github | tex }\BLOCK{ endif }
+  \BLOCK{ if profile.linkedin } $\cdot$ \VAR{ profile.linkedin | tex }\BLOCK{ endif }
+\end{center}
+
+\BLOCK{ if experiences }
+\section{Experience}
+\BLOCK{ for e in experiences }
+\noindent\textbf{\VAR{ e.role | tex }}, \VAR{ e.org | tex }\hfill \VAR{ e.location | tex }\\
+\textit{\VAR{ e.start | tex }\,--\,\VAR{ e.end | tex }}
+\BLOCK{ if e.bullets }
+\begin{itemize}
+\BLOCK{ for b in e.bullets }
+  \item \VAR{ b.text | tex }
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{ endif }
+\BLOCK{ endfor }
+\BLOCK{ endif }
+
+\BLOCK{ if projects }
+\section{Projects}
+\BLOCK{ for p in projects }
+\noindent\textbf{\VAR{ p.name | tex }}\BLOCK{ if p.tech } \textit{(\VAR{ p.tech | join(', ') | tex })}\BLOCK{ endif }
+\BLOCK{ if p.link }\hfill \VAR{ p.link | tex }\BLOCK{ endif }\\
+\BLOCK{ if p.bullets }
+\begin{itemize}
+\BLOCK{ for b in p.bullets }
+  \item \VAR{ b.text | tex }
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{ endif }
+\BLOCK{ endfor }
+\BLOCK{ endif }
+
+\BLOCK{ if skills }
+\section{Skills}
+\BLOCK{ for category, items in skills.items() }
+\noindent\textbf{\VAR{ category | tex }:} \VAR{ items | join(', ') | tex }\\
+\BLOCK{ endfor }
+\BLOCK{ endif }
+
+\BLOCK{ if education }
+\section{Education}
+\BLOCK{ for ed in education }
+\noindent\textbf{\VAR{ ed.school | tex }}\hfill \VAR{ ed.dates | tex }\\
+\VAR{ ed.degree | tex }
+\BLOCK{ if ed.details }
+\begin{itemize}
+\BLOCK{ for d in ed.details }
+  \item \VAR{ d | tex }
+\BLOCK{ endfor }
+\end{itemize}
+\BLOCK{ endif }
+\BLOCK{ endfor }
+\BLOCK{ endif }
+
+\BLOCK{ if certifications }
+\section{Certifications}
+\noindent \VAR{ certifications | join('; ') | tex }
+\BLOCK{ endif }
+
+\end{document}

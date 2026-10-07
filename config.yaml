@@ -1,0 +1,16 @@
+# Tunables for the Jev Resume Builder. All deterministic selection knobs live here.
+jev:
+  endpoint: https://api.typesafe.ai/v1/systemone
+  model: jev-latest
+  timeout_s: 30
+
+top_projects: 3            # projects kept after overrides
+min_experiences: 2         # always keep at least this many experiences
+max_experiences: 3         # never exceed this (pins may push past, with a warning)
+third_exp_threshold: 3.0   # include a 3rd experience only if its expected score >= this
+bullets_per_exp: 3         # bullets kept within each chosen experience
+bullets_per_proj: 2        # bullets kept within each chosen project
+track_merge_margin: 0.20   # merge top-2 tracks if their probabilities differ by <= this
+skills_cap_per_category: 8 # max skills per category after a hybrid merge
+default_location: sf       # used when location confidence is below 0.6
+location_confidence_min: 0.6

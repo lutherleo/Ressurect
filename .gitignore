@@ -1,0 +1,11 @@
+# Applications are generated per-JD and may contain personal data / cached Jev calls.
+applications/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+*.egg-info/
+dist/
+build/

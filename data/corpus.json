@@ -1,0 +1,95 @@
+{
+  "profile": {
+    "name": "Love Kush Pranu",
+    "email": "lp2989@nyu.edu",
+    "github": "github.com/lutherleo",
+    "linkedin": "linkedin.com/in/lovekush-pranu",
+    "locations": {
+      "ny": "New York, NY",
+      "sf": "San Francisco, CA",
+      "mv": "Mountain View, CA"
+    }
+  },
+  "experiences": [
+    {
+      "id": "exp_example",
+      "org": "Example Corp",
+      "role": "Software Engineer Intern",
+      "location": "Remote",
+      "start": "2024-06",
+      "end": "2024-09",
+      "summary": "One-line plain description used in Jev state.",
+      "bullets": [
+        {
+          "id": "exp_example.b1",
+          "text": "Describe a concrete accomplishment with a metric."
+        },
+        {
+          "id": "exp_example.b2",
+          "text": "Another accomplishment; keep each to one line."
+        }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj_example",
+      "name": "Example Project",
+      "tech": [
+        "Python",
+        "PostgreSQL"
+      ],
+      "link": "github.com/you/example",
+      "summary": "One-line plain description used in Jev state.",
+      "bullets": [
+        {
+          "id": "proj_example.b1",
+          "text": "What it does and your role / result."
+        }
+      ]
+    }
+  ],
+  "skill_lists": {
+    "developer": {
+      "Languages": [
+        "Python",
+        "TypeScript"
+      ],
+      "Frameworks": [
+        "FastAPI",
+        "React"
+      ]
+    },
+    "networking": {
+      "Protocols": [
+        "TCP/IP",
+        "BGP"
+      ],
+      "Tools": [
+        "Wireshark",
+        "iperf"
+      ]
+    },
+    "cybersecurity": {
+      "Areas": [
+        "Threat modeling",
+        "AppSec"
+      ],
+      "Tools": [
+        "Burp Suite",
+        "nmap"
+      ]
+    }
+  },
+  "education": [
+    {
+      "school": "Your University",
+      "degree": "B.S. Computer Science",
+      "dates": "2022 - 2026",
+      "details": [
+        "Relevant coursework or GPA (optional)."
+      ]
+    }
+  ],
+  "certifications": []
+}
